@@ -4,27 +4,35 @@ using UnityEngine;
 
 public class movement : MonoBehaviour
 {
-    public float Speed = 10;
+    public float speed = 10.0f;
+    public float jumpForce = 5f;
 
-    
-    
-    // Start is called before the first frame update
+    private Rigidbody2D rigidbody2d;
+    private bool isGrounded = false;
+
     void Start()
     {
-
+        rigidbody2d = GetComponent<Rigidbody2D>();
     }
-    // Update is called once per frame
+
     void Update()
     {
-        movements();
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector2 direction = new Vector2(horizontal, 0);
+        rigidbody2d.velocity = direction * speed;
+
+        if (isGrounded && Input.GetKeyDown("w"))
+        {
+            rigidbody2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            isGrounded = false;
+        }
     }
 
-
-    void movements()
+    void OnCollisionEnter2D(Collision2D other)
     {
-        float xinput = Input.GetAxis("Horizontal");
-        float yinput = Input.GetAxis("Vertical");
-        Vector3 direction = new Vector3(xinput, yinput, 0);
-        transform.Translate(direction * Speed * Time.deltaTime);
+        isGrounded = true;
+        Debug.Log("onfloor");
     }
 }
